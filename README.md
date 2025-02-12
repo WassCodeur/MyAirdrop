@@ -35,6 +35,28 @@ The Airdrop project is designed to distribute tokens to a list of recipients. Th
     npm run airdrop
     ```
 
+# Deployment
+
+1. Deploy the Airdrop contract:
+    ```bash
+    npx hardhat --network [the network] run scripts/script.ts
+
+    ```
+2. Verify the contract on Etherscan:
+    ```bash
+
+    npx hardhat verify --network holesky [contract address] [constructor argument1] [constructor argument2] [constructor argument3] [constructor argument3]
+
+    ```
+
+    OR
+
+    ```bash
+    npx hardhat --network [the network] verify --constructor-args arguments [contract address]
+    ```
+
+    
+
 ## Contributing
 
 We welcome contributions! Please fork the repository and submit a pull request.
