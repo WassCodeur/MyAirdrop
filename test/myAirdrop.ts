@@ -5,6 +5,7 @@ import { MerkleTree } from "merkletreejs";
 import keccak256 from "keccak256";
 
 
+    
 describe("MyAirdrop", function () {
     async function deployAirdropFixture() {
         const [owner, user1, user2] = await hre.ethers.getSigners();
@@ -21,7 +22,7 @@ describe("MyAirdrop", function () {
 
         // await token.mint(airdrop.target, 10000);
 
-        return { airdrop,  owner, user1, user2, merkleTree };
+        return { airdrop, owner, user1, user2, merkleTree };
     }
 
     describe("Deployment", function () {
@@ -33,7 +34,7 @@ describe("MyAirdrop", function () {
 
     describe("Claiming Airdrop", function () {
         it("should allow a valid claim", async function () {
-            const { airdrop,user1, merkleTree } = await loadFixture(deployAirdropFixture);
+            const { airdrop, user1, merkleTree } = await loadFixture(deployAirdropFixture);
             const amount = 100;
             const leaf = keccak256(hre.ethers.solidityPacked(["address", "uint256"], [user1.address, amount]));
             const proof = merkleTree.getHexProof(leaf);
@@ -51,7 +52,7 @@ describe("MyAirdrop", function () {
             const proof = merkleTree.getHexProof(leaf);
 
             await airdrop.connect(user1).claim(amount, proof);
-            await expect(airdrop.connect(user1).claim(amount, proof)).to.be.revertedWith("ALREADY_CLAIMED");
+            await expect(airdrop.connect(user1).claim(amount, proof)).to.be.revertedWithCustomError(airdrop, "AlreadyClaimed");
         });
 
         it("should reject an invalid proof", async function () {
@@ -59,7 +60,7 @@ describe("MyAirdrop", function () {
             const amount = 100;
             const fakeProof = [keccak256("invalid")];
 
-            await expect(airdrop.connect(user2).claim(amount, fakeProof)).to.be.revertedWith("INVALID PROOF");
+            await expect(airdrop.connect(user2).claim(amount, fakeProof)).to.be.revertedWithCustomError(airdrop, "InvalidProof");
         });
         it("should reject an invalid amount", async function () {
             const { airdrop, user1, merkleTree } = await loadFixture(deployAirdropFixture);
@@ -68,7 +69,7 @@ describe("MyAirdrop", function () {
             const leaf = keccak256(hre.ethers.solidityPacked(["address", "uint256"], [user1.address, amount]));
             const proof = merkleTree.getHexProof(leaf);
 
-            await expect(airdrop.connect(user1).claim(fakeAmount, proof)).to.be.revertedWith("INVALID PROOF");
+            await expect(airdrop.connect(user1).claim(fakeAmount, proof)).to.be.revertedWithCustomError(airdrop, "InvalidProof");
         });
     });
     it("should reject an invalid address", async function () {
@@ -78,6 +79,6 @@ describe("MyAirdrop", function () {
         const leaf = keccak256(hre.ethers.solidityPacked(["address", "uint256"], [fakeAddress, amount]));
         const proof = merkleTree.getHexProof(leaf);
 
-        await expect(airdrop.connect(user2).claim(amount, proof)).to.be.revertedWith("INVALID PROOF");
+        await expect(airdrop.connect(user2).claim(amount, proof)).to.be.revertedWithCustomError(airdrop, "InvalidProof");
     });
 });

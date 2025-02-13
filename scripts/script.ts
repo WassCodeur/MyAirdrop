@@ -10,14 +10,16 @@ async function main() {
 
     // const [user1, user2] = await ethers.getSigners();
 
-    
+    const users = ["0xc0dd2bFDAC5a426294BC88DEAFEB444aD98e7121", "0x6f1E48D6F8a3e7338098Cf35ee684d2c9dD43B06"]
+
+
 
     const tonkenName = "WassToken3";
     const tokenSymbol = "WTK4";
-    const totalSupply = ethers.parseEther("10000000000000000000000000")
+    const totalSupply = ethers.parseEther("10000000000000")
 
-    const elements = ["0xc0dd2bFDAC5a426294BC88DEAFEB444aD98e7121", "0x6f1E48D6F8a3e7338098Cf35ee684d2c9dD43B06"].map(user =>
-        keccak256(ethers.solidityPacked(["address", "uint256"], [user, ethers.parseEther("100000000000000")])))
+    const elements = users.map(user =>
+        keccak256(ethers.solidityPacked(["address", "uint256"], [user, ethers.parseEther("1000000")])))
     const merkleTree = new MerkleTree(elements, keccak256, { sortPairs: true });
     const merkleRoot = merkleTree.getHexRoot();
 
@@ -35,7 +37,7 @@ async function main() {
 
     console.log("-----------------------claim token---------------\n\n")
 
-    const amount = ethers.parseEther("100000000000000");
+    const amount = ethers.parseEther("1000000");
     const leaf = keccak256(ethers.solidityPacked(["address", "uint256"], ["0x6f1E48D6F8a3e7338098Cf35ee684d2c9dD43B06", amount]));
     let proof = merkleTree.getHexProof(leaf);
 
